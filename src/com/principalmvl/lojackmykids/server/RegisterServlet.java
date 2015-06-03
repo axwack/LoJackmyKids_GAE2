@@ -16,7 +16,6 @@
 package com.principalmvl.lojackmykids.server;
 
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -82,14 +81,14 @@ public class RegisterServlet extends BaseServlet {
 		
 		Datastore.put(contactList);
 
-		// Datastore.register(regId); older way so we need to see if the new
+		//Datastore.register(regId); older way so we need to see if the new
 		// stores the regid
 		setSuccess(resp);
 	}
 
 	private List<Contact> createContact(String regId, String email) {
 		contact = new Contact();
-		Key key = Datastore.createKey(Contact.class, email);
+		Key key = Datastore.createKey(Contact.class, regId);
 		contact.setKey(key);
 		contact.setEmail(email);
 		contact.setRegId(regId);

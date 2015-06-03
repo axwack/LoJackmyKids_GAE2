@@ -1,7 +1,10 @@
 package com.principalmvl.lojackmykids.model;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 
@@ -9,27 +12,93 @@ import org.slim3.datastore.Attribute;
 import org.slim3.datastore.CreationDate;
 import org.slim3.datastore.Datastore;
 import org.slim3.datastore.Model;
-import org.slim3.datastore.ModelRef;
 import org.slim3.datastore.ModificationDate;
 
 import com.google.appengine.api.datastore.Key;
+import com.principalmvl.lojackmykids.authentication.AppRole;
 
 @Model
 public class Contact {
 
 	/**
-	 * 
+	 * Contact Class that wrappers User
 	 */
-	private String email;
 	private String regId;
+	private String userId;
+	private String email;
+	private String nickname;
+	private boolean enabled;
+	private Set<AppRole> authorities;
+	private String firstName, lastName;
 
-	private org.slim3.datastore.ModelRef<Contact> contactRef = new org.slim3.datastore.ModelRef<Contact>(Contact.class);
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+
+	//relationship to App Engine User class	
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public Set<AppRole> getAuthorities() {
+		return authorities;
+	}
+
+	public void setAuthorities(Set<AppRole> authorities) {
+		this.authorities = authorities;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
 
 	@Attribute(listener = ModificationDate.class)
 	Date updatedAt;
 	private long id;
 	@Attribute(listener = CreationDate.class)
 	Date createdAt;
+	
+	public Contact(){}
+	
+	public Contact (String UserId){
+		userId = UserId;
+	}
+
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 
 	public Date getCreatedAt() {
 		return createdAt;
@@ -66,10 +135,6 @@ public class Contact {
 		this.key = key;
 	}
 
-	public ModelRef<Contact> getContactRef() {
-		return contactRef;
-	}
-
 	public static Contact find(String email, EntityManager em) {
 		javax.persistence.Query q = em
 				.createQuery("Select c from Contact c where c.email = :email");
@@ -86,13 +151,6 @@ public class Contact {
 		return Datastore.get(Contact.class, key);
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
 
 	public String getRegId() {
 		return regId;
@@ -107,5 +165,10 @@ public class Contact {
 				+ " Key: " + getKey() + " Last Update Date: "
 				+ getUpdatedAt() + " Create Date: " + getCreatedAt()
 				+ " }";
+	}
+
+	public boolean isEnabled() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
