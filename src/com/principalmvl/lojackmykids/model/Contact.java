@@ -1,8 +1,6 @@
 package com.principalmvl.lojackmykids.model;
 
-import java.util.Collection;
 import java.util.Date;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
