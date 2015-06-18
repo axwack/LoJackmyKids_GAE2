@@ -1,6 +1,6 @@
-package com.principalmvl.lojackmykids.model;
+package com.principalmvl.lojackmykids.interfaces;
 
-import com.google.appengine.api.datastore.Entity;
+import com.principalmvl.lojackmykids.model.GaeUser;
 
 /**
 *
@@ -8,9 +8,12 @@ import com.google.appengine.api.datastore.Entity;
 *
 * @author Luke Taylor
 */
-public interface iUserRegistry {
+
+public interface UserRegistry {
 
 	GaeUser findUser(String userId);
+	
+	GaeUser findUserByQuery(String email);
 
 	void registerUser(GaeUser user);
 

@@ -26,6 +26,7 @@ import org.springframework.web.filter.GenericFilterBean;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.principalmvl.lojackmykids.model.GaeUser;
+import com.principalmvl.lojackmykids.server.LookupUserServlet;
 
 
 
@@ -35,52 +36,57 @@ import com.principalmvl.lojackmykids.model.GaeUser;
 public class GaeAuthenticationFilter extends GenericFilterBean {
 	private static final String REGISTRATION_URL = "/register.jsp";
 
-	private static final Logger log = Logger.getLogger(GaeAuthenticationFilter.class.getName());
+	private static final Logger log = Logger.getLogger(LookupUserServlet.class.getName());
 	
 	private final AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> ads = new WebAuthenticationDetailsSource();
 	private AuthenticationManager authenticationManager;
+	
 	private AuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
 
+	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		
 		User googleUser = UserServiceFactory.getUserService().getCurrentUser();
-
-		if (authentication != null
-				&& !loggedInUserMatchesGaeUser(authentication, googleUser)) {
+		
+		if (authentication != null && !loggedInUserMatchesGaeUser(authentication, googleUser)) {
+			log.warning("Authentication: true: loggedInUserMatches: true");
 			SecurityContextHolder.clearContext();
 			authentication = null;
 			((HttpServletRequest) request).getSession().invalidate();
 		}
 
 		if (authentication == null) {
+			log.warning("authentication is true");
+			
 			if (googleUser != null) {
+				
 				log.warning("Currently logged on to GAE as user " + googleUser);
 				log.warning("Authenticating to Spring Security");
-				
 				// User has returned after authenticating via GAE. Need to authenticate
 				// through Spring Security.
-				PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(
-						googleUser, null);
+				PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(googleUser, null);
 				token.setDetails(ads.buildDetails((HttpServletRequest) request));
 
 				try {
-					authentication = authenticationManager.authenticate(token);
+					
+					authentication = authenticationManager.authenticate(token);	
 					SecurityContextHolder.getContext().setAuthentication(authentication);
-
+					
 					if (authentication.getAuthorities().contains(AppRole.NEW_USER)) {
+						
 						log.warning("New user authenticated. Redirecting to registration page");
 						((HttpServletResponse) response).sendRedirect(REGISTRATION_URL);
-
 						return;
 					}
 
 				}
 				catch (AuthenticationException e) {
-					log.warning("Failure");
-					log.warning("error: "+ e.getMessage());
 					failureHandler.onAuthenticationFailure((HttpServletRequest) request,
 							(HttpServletResponse) response, e);
-
+					log.warning("Authentication error...");
+					log.warning(e.toString());
 					return;
 				}
 			}
@@ -91,19 +97,23 @@ public class GaeAuthenticationFilter extends GenericFilterBean {
 
 	private boolean loggedInUserMatchesGaeUser(Authentication authentication,
 			User googleUser) {
+		
 		assert authentication != null;
-
+		
 		if (googleUser == null) {
 			// User has logged out of GAE but is still logged into application
 			return false;
 		}
 
 		GaeUser contact = (GaeUser) authentication.getPrincipal();
-
+		log.warning("GaeUser: " + contact.toString());
+		
 		if (!contact.getEmail().equals(googleUser.getEmail())) {
+			log.warning("returning false");
 			return false;
+			
 		}
-
+		log.warning("returning true");
 		return true;
 
 	}
@@ -112,7 +122,7 @@ public class GaeAuthenticationFilter extends GenericFilterBean {
 	public void afterPropertiesSet() throws ServletException {
 		Assert.notNull(authenticationManager, "AuthenticationManager must be set");
 	}
-
+	
 	public void setAuthenticationManager(AuthenticationManager authenticationManager) {
 		this.authenticationManager = authenticationManager;
 	}
@@ -120,4 +130,5 @@ public class GaeAuthenticationFilter extends GenericFilterBean {
 	public void setFailureHandler(AuthenticationFailureHandler failureHandler) {
 		this.failureHandler = failureHandler;
 	}
+
 }

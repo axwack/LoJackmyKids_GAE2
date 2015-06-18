@@ -7,18 +7,19 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.slim3.datastore.Datastore;
+import org.springframework.stereotype.Component;
 import org.springframework.ui.ModelMap;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.principalmvl.lojackmykids.authentication.AppRole;
+import com.principalmvl.lojackmykids.interfaces.UserRegistry;
 import com.principalmvl.lojackmykids.model.Contact;
 import com.principalmvl.lojackmykids.model.GaeUser;
-import com.principalmvl.lojackmykids.model.iUserRegistry;
 import com.principalmvl.lojackmykids.server.LookupUserServlet;
 
 /**
@@ -26,7 +27,8 @@ import com.principalmvl.lojackmykids.server.LookupUserServlet;
  *
  * @author Luke Taylor
  */
-public class GaeDatastoreUserRegistry implements iUserRegistry {
+
+public class GaeDatastoreUserRegistry implements UserRegistry {
 	
 	private static final Logger log = Logger.getLogger(LookupUserServlet.class
 			.getName());
@@ -43,25 +45,28 @@ public class GaeDatastoreUserRegistry implements iUserRegistry {
 	public GaeUser findUser(String userId) {
 		
 		Key key = KeyFactory.createKey(USER_TYPE, userId);
-		//DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();//Part of old implementation
+		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();//Part of old implementation
 
 		try {
-			//Entity contact = datastore.get(key); //Old implementation
-			GaeUser contact = Datastore.get(GaeUser.class, key); //my implementation
-
-			//long binaryAuthorities = (Long) contact.getProperty(USER_AUTHORITIES);
-			Set<AppRole> appRole= contact.getAuthorities();
-			log.warning("Authorities:" + appRole);
+			Entity contact = datastore.get(key); //Old implementation
+			//GaeUser contact = Datastore.get(GaeUser.class, key); //my implementation
+			
+			long binaryAuthorities = (Long) contact.getProperty(USER_AUTHORITIES);
+			//Set<AppRole> appRole= contact.getAuthorities();
+			log.warning("Authorities:" + binaryAuthorities);
 			Set<AppRole> roles = EnumSet.noneOf(AppRole.class);
 
 			for (AppRole r : AppRole.values()) {
+				
 				if ((binaryAuthorities & (1 << r.getBit())) != 0) {
 					roles.add(r);
 				}
 				
 				log.warning("Added role to user: "+ r);
+			
+				//log.warning("Testing: r :"+r);
 			}
-						
+			/*			
 			GaeUser gaeUser = new GaeUser(
 					contact.getKey().getName(),
 					contact.getNickname(),
@@ -71,16 +76,16 @@ public class GaeDatastoreUserRegistry implements iUserRegistry {
 					roles,
 					contact.isEnabled()
 					);
-			log.warning("Creating new user. Created: "+gaeUser);
-			/*
-			 * GaeUser gaeUser = new GaeUser(
+					*/
+	
+			  GaeUser gaeUser = new GaeUser(
 					contact.getKey().getName(),
 					(String) contact.getProperty(USER_NICKNAME),
 					(String) contact.getProperty(USER_EMAIL),
 					(String) contact.getProperty(USER_FORENAME),
 					(String) contact.getProperty(USER_SURNAME), roles,
 					(Boolean) contact.getProperty(USER_ENABLED));
-					
+			/*		
 			Contact contact = new Contact(
 							 user.getKey().getName(),
 					(String) user.getProperty(USER_NICKNAME),
@@ -90,10 +95,12 @@ public class GaeDatastoreUserRegistry implements iUserRegistry {
 					roles,
 					(Boolean) user.getProperty(USER_ENABLED));
 			 */
+			  log.warning("Creating new user. Created: "+gaeUser);
 			return gaeUser;
 
 		}
-		catch (EntityNotFoundException e) {
+		
+		catch (Exception e) {
 			log.warning(userId + " not found in datastore");
 			return null;
 		}
@@ -151,6 +158,15 @@ public class GaeDatastoreUserRegistry implements iUserRegistry {
 		model.addAttribute("userList", users);
 
 		return users;
+	}
+
+
+	@Override
+	public GaeUser findUserByQuery(String email) {
+		GaeUser gaseUser = Datastore.query(GaeUser.class)
+			    .filter("email", FilterOperator.EQUAL, email)
+			    .asSingle();
+		return gaseUser;
 	}
 
 }

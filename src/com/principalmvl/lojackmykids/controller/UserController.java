@@ -1,6 +1,7 @@
 package com.principalmvl.lojackmykids.controller;
 
 import java.util.List;
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,11 +14,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.principalmvl.lojackmykids.model.Contact;
+import com.principalmvl.lojackmykids.server.LookupUserServlet;
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
 
+	private static final Logger log = Logger.getLogger(UserController);
+	log.warn("In UserController");
+	
 	@RequestMapping(value = "/addUser", method = RequestMethod.GET)
 	public String getAddUserPage(ModelMap model) {
 
@@ -46,8 +51,9 @@ public class UserController {
 	// get all users
 	
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
+	
 	public @ResponseBody List<Contact> listCustomer( ModelMap model) {
-
+		log.warn("In the list return on the UserController");
 		List<Contact> users = Datastore.query(Contact.class).asList();
 		
 		model.addAttribute("userList", users);

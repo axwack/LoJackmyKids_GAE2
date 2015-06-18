@@ -3,33 +3,46 @@
 <b:beans xmlns="http://www.springframework.org/schema/security"
 	xmlns:b="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-	http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/security 
+	http://www.springframework.org/schema/security/spring-security.xsd">
 
-	<http pattern="/static/**" security="none" />
+
 	<http pattern="/favicon.ico" security="none" />
 	<http pattern="/loggedout.jsp" security="none" />
 	<http pattern="/disabled.jsp" security="none" />
+	<http pattern="/_ah/**" security="none" />
+	<http pattern="/landing.jsp" security="none"></http>
 
-	<http use-expressions="true" entry-point-ref="gaeEntryPoint">
+
+	<http use-expressions="true" entry-point-ref="gaeEntryPoint"
+		auto-config="true">
 		<intercept-url pattern="/" access="permitAll" />
+		<intercept-url pattern="/home.jsp" access="isAuthenticated()" />
 		<intercept-url pattern="/logout.jsp" access="permitAll" />
-		<intercept-url pattern="/disabled.jsp" access="permitAll" />
-		<intercept-url pattern="/register.jsp" access="hasRole('NEW_USER')" />
-		<intercept-url pattern="/**" access="hasRole('USER')" />
+		<intercept-url pattern="/register.jsp*" access="hasRole('ANONYMOUS')" />
+		<intercept-url pattern="/ListUsers" access="isAuthenticated()" />
+		<intercept-url pattern="/user/list" access="isAuthenticated()" />
+		<intercept-url pattern="/**" access="isAuthenticated()" />
+		<!-- <intercept-url pattern="/_ah/**" access="permitAll"/> -->
 		<custom-filter position="PRE_AUTH_FILTER" ref="gaeFilter" />
 	</http>
 
 	<b:bean id="gaeEntryPoint"
 		class="com.principalmvl.lojackmykids.authentication.GoogleAccountsAuthenticationEntryPoint" />
-	
-	<b:bean id="gaeFilter" class="com.principalmvl.lojackmykids.authentication.GaeAuthenticationFilter">
-		<b:property name="authenticationManager" ref="authenticationManager"/>
+
+	<b:bean id="gaeFilter"
+		class="com.principalmvl.lojackmykids.authentication.GaeAuthenticationFilter">
+		<b:property name="authenticationManager" ref="authenticationManager" />
 		<b:property name="failureHandler">
-			<b:bean class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
+			<b:bean
+				class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
 				<b:property name="exceptionMappings">
 					<b:map>
-						<b:entry key="org.springframework.security.authentication.DisabledException" value="/disabled.jsp" />
+						<b:entry
+							key="org.springframework.security.authentication.DisabledException"
+							value="/disabled.jsp" />
 					</b:map>
 				</b:property>
 			</b:bean>
@@ -45,6 +58,14 @@
 		<b:property name="userRegistry" ref="userRegistry" />
 	</b:bean>
 
-	<b:bean id="userRegistry" class="com.principalmvl.lojackmykids.datautilities.GaeDatastoreUserRegistry" />
+	<b:bean id="userRegistry"
+		class="com.principalmvl.lojackmykids.datautilities.GaeDatastoreUserRegistry" />
 
+	<b:bean id="loggerListener"
+		class="org.springframework.security.authentication.event.LoggerListener" />
+
+	<!-- added from Stack overflow -->
+	<b:bean id="accessDeniedHandler"
+		class="com.principalmvl.lojackmykids.security.AccessDeniedHandlerImpl" />
+	
 </b:beans>

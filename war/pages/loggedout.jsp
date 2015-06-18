@@ -5,13 +5,13 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" href="/static/css/gae.css" type="text/css" />
+    <link rel="stylesheet" href="/styles/styles.css" type="text/css" />
     <title>Spring Security GAE Sample</title>
   </head>
 
   <body>
   <div id="content">
-  <p>You've been logged out of the application. <a href="/home.htm">Log back in</a>.</p>
+  <p>You've been logged out of the application. <a href="/">Log back in</a>.</p>
   </div>
   </body>
 </html>

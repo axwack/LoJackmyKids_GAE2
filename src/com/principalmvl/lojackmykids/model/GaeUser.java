@@ -160,12 +160,10 @@ public class GaeUser implements Serializable {
 		return enabled;
 	}
 
-
-
 	@Override
 	public String toString() {
 		return "GaeUser{" + "userId='" + userId + '\'' + ", nickname='" + nickname + '\''
 				+ ", forename='" + forename + '\'' + ", surname='" + surname + '\''
-				+ ", authorities=" + authorities + '}';
+				+ ", authorities=" + authorities + ", email="+email+'}'+ ", isEnabled="+enabled+'}';
 	}
 }

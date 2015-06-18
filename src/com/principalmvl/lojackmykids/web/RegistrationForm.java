@@ -1,15 +1,35 @@
 package com.principalmvl.lojackmykids.web;
 
-
+import com.principalmvl.lojackmykids.validators.Forename;
+import com.principalmvl.lojackmykids.validators.Surname;
 
 /**
  * @author Luke Taylor
  */
 public class RegistrationForm {
-	//@Forename [Look at Spring Validators for this]
+	@Forename
 	private String forename;
-	//@Surname
+	@Surname
 	private String surname;
+	private String email;
+	private String password;
+	
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 	public String getForename() {
 		return forename;
