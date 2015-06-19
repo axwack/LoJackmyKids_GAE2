@@ -74,7 +74,7 @@ public class GaeAuthenticationFilter extends GenericFilterBean {
 					authentication = authenticationManager.authenticate(token);	
 					SecurityContextHolder.getContext().setAuthentication(authentication);
 					
-					if (authentication.getAuthorities().contains(AppRole.NEW_USER)) {
+					if (authentication.getAuthorities().contains(AppRole.ROLE_NEW_USER)) {
 						
 						log.warning("New user authenticated. Redirecting to registration page");
 						((HttpServletResponse) response).sendRedirect(REGISTRATION_URL);

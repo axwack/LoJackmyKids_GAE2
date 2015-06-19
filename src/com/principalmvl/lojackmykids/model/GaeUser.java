@@ -115,7 +115,7 @@ public class GaeUser implements Serializable {
 	public GaeUser(String userId, String nickname, String email) {
 		this.userId = userId;
 		this.nickname = nickname;
-		this.authorities = EnumSet.of(AppRole.NEW_USER);
+		this.authorities = EnumSet.of(AppRole.ROLE_NEW_USER);
 		this.forename = null;
 		this.surname = null;
 		this.email = email;

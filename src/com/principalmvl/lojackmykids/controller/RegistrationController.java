@@ -61,10 +61,10 @@ public class RegistrationController {
 		GaeUser currentUser = (GaeUser) authentication.getPrincipal();
 		log.warning("Current User: "+currentUser.toString());
 		
-		Set<AppRole> roles = EnumSet.of(AppRole.USER);
+		Set<AppRole> roles = EnumSet.of(AppRole.ROLE_USER);
 
 		if (UserServiceFactory.getUserService().isUserAdmin()) {
-			roles.add(AppRole.ADMIN);
+			roles.add(AppRole.ROLE_ADMIN);
 		}
 
 		GaeUser user = new GaeUser(currentUser.getUserId(), 

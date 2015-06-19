@@ -21,7 +21,7 @@
 		<intercept-url pattern="/" access="permitAll" />
 		<intercept-url pattern="/home.jsp" access="isAuthenticated()" />
 		<intercept-url pattern="/logout.jsp" access="permitAll" />
-		<intercept-url pattern="/register.jsp*" access="hasAnyRole('ANONYMOUS','NEW_USER')" />
+		<intercept-url pattern="/register.jsp*" access="hasRole('ROLE_NEW_USER')" />
 		<intercept-url pattern="/ListUsers" access="isAuthenticated()" />
 		<intercept-url pattern="/user/list" access="isAuthenticated()" />
 		<intercept-url pattern="/**" access="isAuthenticated()" />

@@ -94,18 +94,6 @@ public class LoginController {
 		return "sendmessage/SendAll";
 
 	}
-
-	/*@RequestMapping(value = "/user/list", method = RequestMethod.GET)
-	@ResponseBody
-	public  List<Contact> listCustomer( ModelMap model) {
-		log.warn("In the list return on the UserController");
-		List<Contact> users = Datastore.query(Contact.class).asList();
-		
-		model.addAttribute("userList", users);
-			
-		return users;
-
-	}*/
 	
 	private boolean isUserInDb(User _user) {
 
