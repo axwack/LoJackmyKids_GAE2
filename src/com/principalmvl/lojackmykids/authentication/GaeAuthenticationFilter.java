@@ -51,14 +51,12 @@ public class GaeAuthenticationFilter extends GenericFilterBean {
 		User googleUser = UserServiceFactory.getUserService().getCurrentUser();
 		
 		if (authentication != null && !loggedInUserMatchesGaeUser(authentication, googleUser)) {
-			log.warning("Authentication: true: loggedInUserMatches: true");
 			SecurityContextHolder.clearContext();
 			authentication = null;
 			((HttpServletRequest) request).getSession().invalidate();
 		}
 
 		if (authentication == null) {
-			log.warning("authentication is true");
 			
 			if (googleUser != null) {
 				
@@ -70,8 +68,9 @@ public class GaeAuthenticationFilter extends GenericFilterBean {
 				token.setDetails(ads.buildDetails((HttpServletRequest) request));
 
 				try {
-					
+					log.warning("authenticating...");
 					authentication = authenticationManager.authenticate(token);	
+					
 					SecurityContextHolder.getContext().setAuthentication(authentication);
 					
 					if (authentication.getAuthorities().contains(AppRole.ROLE_NEW_USER)) {

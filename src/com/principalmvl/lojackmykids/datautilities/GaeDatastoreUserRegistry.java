@@ -7,12 +7,10 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.slim3.datastore.Datastore;
-import org.springframework.stereotype.Component;
 import org.springframework.ui.ModelMap;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query.FilterOperator;
@@ -33,27 +31,33 @@ public class GaeDatastoreUserRegistry implements UserRegistry {
 	private static final Logger log = Logger.getLogger(LookupUserServlet.class
 			.getName());
 	
-	private static final String USER_TYPE = "Contact";
+	private static final String USER_TYPE = "GAEUser";
 	private static final String USER_FORENAME = "forename";
 	private static final String USER_SURNAME = "surname";
 	private static final String USER_NICKNAME = "nickname";
 	private static final String USER_EMAIL = "email";
 	private static final String USER_ENABLED = "enabled";
 	private static final String USER_AUTHORITIES = "authorities";
-
+	private static final String PASSWORD = "password";
+	private static final String REGID = "regid";
+	
 	@Override
 	public GaeUser findUser(String userId) {
-		
-		Key key = KeyFactory.createKey(USER_TYPE, userId);
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();//Part of old implementation
 
-		try {
-			Entity contact = datastore.get(key); //Old implementation
-			//GaeUser contact = Datastore.get(GaeUser.class, key); //my implementation
+		//DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();//Part of old implementation
+
+		try {			
+			//Entity contact = datastore.get(key); //Old implementation
+			Key key = Datastore.createKey(GaeUser.class, userId);
+			log.info("Finding user by key" );
+			log.info("Key is : "+key.toString());
+			GaeUser gaeUser = Datastore.get(GaeUser.class, key); //my implementation
 			
-			long binaryAuthorities = (Long) contact.getProperty(USER_AUTHORITIES);
-			//Set<AppRole> appRole= contact.getAuthorities();
-			log.warning("Authorities:" + binaryAuthorities);
+			assert gaeUser != null;
+			
+			long binaryAuthorities= gaeUser.getRolesBit();
+			//long binaryAuthorities = (Long) contact.getProperty(USER_AUTHORITIES);
+
 			Set<AppRole> roles = EnumSet.noneOf(AppRole.class);
 
 			for (AppRole r : AppRole.values()) {
@@ -66,36 +70,7 @@ public class GaeDatastoreUserRegistry implements UserRegistry {
 			
 				//log.warning("Testing: r :"+r);
 			}
-			/*			
-			GaeUser gaeUser = new GaeUser(
-					contact.getKey().getName(),
-					contact.getNickname(),
-					contact.getEmail(),
-					contact.getForename(),
-					contact.getSurname(), 
-					roles,
-					contact.isEnabled()
-					);
-					*/
-	
-			  GaeUser gaeUser = new GaeUser(
-					contact.getKey().getName(),
-					(String) contact.getProperty(USER_NICKNAME),
-					(String) contact.getProperty(USER_EMAIL),
-					(String) contact.getProperty(USER_FORENAME),
-					(String) contact.getProperty(USER_SURNAME), roles,
-					(Boolean) contact.getProperty(USER_ENABLED));
-			/*		
-			Contact contact = new Contact(
-							 user.getKey().getName(),
-					(String) user.getProperty(USER_NICKNAME),
-					(String) user.getProperty(USER_EMAIL),
-					(String) user.getProperty(USER_FORENAME),
-					(String) user.getProperty(USER_SURNAME), 
-					roles,
-					(Boolean) user.getProperty(USER_ENABLED));
-			 */
-			  log.warning("Creating new user. Created: "+gaeUser);
+						
 			return gaeUser;
 
 		}
@@ -105,8 +80,7 @@ public class GaeDatastoreUserRegistry implements UserRegistry {
 			return null;
 		}
 	}
-
-
+	
 	public void removeUser(String userId) {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Key key = KeyFactory.createKey(USER_TYPE, userId);
@@ -116,27 +90,11 @@ public class GaeDatastoreUserRegistry implements UserRegistry {
 
 	@Override
 	public void registerUser(GaeUser newUser) {
-		log.warning("Attempting to create new user " + newUser);
-
-		Key key = KeyFactory.createKey(USER_TYPE, newUser.getUserId());
-
-		Entity user = new Entity(key);
-		user.setProperty(USER_EMAIL, newUser.getEmail());
-		user.setProperty(USER_NICKNAME, newUser.getNickname());
-		user.setProperty(USER_FORENAME, newUser.getForename());
-		user.setProperty(USER_SURNAME, newUser.getSurname());
-		user.setUnindexedProperty(USER_ENABLED, newUser.isEnabled());
-
+		//Key key = KeyFactory.createKey(USER_TYPE, newUser.getUserId());
+		Key key = Datastore.createKey(GaeUser.class, newUser.getUserId());
+		newUser.setKey(key);
 		
-		/*
-		Contact user = new Contact();
-		user.setKey(key);
-		user.setEmail(newUser.getEmail());
-		user.setNickname(newUser.getNickname());
-		user.setFirstName(newUser.getFirstName());
-		user.setLastName(newUser.getLastName());
-		user.setEnabled(newUser.isEnabled());
-*/
+		log.warning("Attempting to create new user " + newUser);
 		Collection<AppRole> roles = newUser.getAuthorities();
 
 		long binaryAuthorities = 0;
@@ -144,11 +102,10 @@ public class GaeDatastoreUserRegistry implements UserRegistry {
 		for (AppRole r : roles) {
 			binaryAuthorities |= 1 << r.getBit();
 		}
-
-		//user.setUnindexedProperty(USER_AUTHORITIES, binaryAuthorities);
-
-		//DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Datastore.put(user);
+		
+		log.info("BinaryAuthorities: "+ Long.toString(binaryAuthorities));
+		newUser.setRolesBit(binaryAuthorities);
+		Datastore.put(newUser);
 		
 	}
 	

@@ -7,14 +7,11 @@
 <html>
 <head>
 <link rel="stylesheet" href="/styles/styles.css" type="text/css" />
-<link href="./styles/kendo.common.min.css" rel="stylesheet"
-	type="text/css" />
+<link href="./styles/kendo.common.min.css" rel="stylesheet" type="text/css" />
 <!-- Default Kendo UI theme CSS -->
 <link href="./styles/kendo.default.min.css" rel="stylesheet" />
-<link href="./styles/kendo.dataviz.min.css" rel="stylesheet"
-	type="text/css" />
-<link href="./styles/kendo.dataviz.default.min.css" rel="stylesheet"
-	type="text/css" />
+<link href="./styles/kendo.dataviz.min.css" rel="stylesheet" type="text/css" />
+<link href="./styles/kendo.dataviz.default.min.css" rel="stylesheet" type="text/css" />
 </head>
 <script src="./js/jquery.min.js"></script>
 <script src="./js/kendo.dataviz.min.js"></script>
@@ -28,9 +25,11 @@
 			<h1 class="header-heading">Lo Jack My Kids App Engine Messaging</h1>
 		</div>
 	</div>
-	<p>
+	
+	<div class="content">
+	<p><H1>
 		Welcome to Lo Jack My Kids
-		<sec:authentication property="principal.nickname" />
+		<sec:authentication property="principal.nickname" /> </H1>
 		. Please enter your registration details in order to use the
 		application.
 	</p>
@@ -38,37 +37,32 @@
 		GAE data store, keyed under your unique Google Accounts identifier. It
 		doesn't have to be accurate. When you log in again, the information
 		will be automatically retrieved.</p>
-	<div class="content">
 		<div class="container">
 			<div class="main">
 				<div class="aside">
-					<form:form id="register" method="post"
-						modelAttribute="registrationForm">
-						<fieldset>
-							<form:label path="forename">First Name:</form:label>
+					<form:form id="register" method="post" modelAttribute="registrationForm">
+						<div class ="inputs">
+						<fieldset>	
 							<form:errors path="forename" cssClass="fieldError" />
 							<br />
-							<form:input path="forename" />
-							<br />
-
-							<form:label path="surname">Last Name:</form:label>
+							<form:input path="forename" placeholder="First Name" />
+							<br />				
 							<form:errors path="surname" cssClass="fieldError" />
 							<br />
-							<form:input path="surname" />
-							<br />
-
-							<form:label path="email">Email:</form:label>
+							<form:input path="surname" placeholder="Last Name"/>
+							<br />			
 							<form:errors path="email" cssClass="fieldError" />
 							<br />
-							<form:input path="email" />
+							<form:input type="email" path="email"  placeholder="e-mail"/>
 							<br />
 
-							<form:label path="password">Password:</form:label>
+
 							<form:errors path="password" cssClass="fieldError" />
 							<br />
-							<form:input path="password" />
+							<form:input type="password" path="password" placeholder="password"/>
 							<br />
 						</fieldset>
+						</div>
 						<input type="submit" value="Register">
 					</form:form>
 				</div>
@@ -78,7 +72,7 @@
 </body>
 &nbsp;
 <div class="footer">(c) Vincent Lee  <p>User Registered at: <sec:authentication property="principal.nickname"/>&nbsp; <sec:authentication property="principal.forename"/> <sec:authentication property="principal.surname"/><p>
-<sec:authorize access="hasRole('NEW_USER')"><b>New User Role</b></sec:authorize>
+<sec:authorize access="hasRole('ROLE_NEW_USER')"><b>New User Role</b></sec:authorize>
 </div>
 
 </html>

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.slim3.datastore.Datastore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.principalmvl.lojackmykids.authentication.AppRole;
 import com.principalmvl.lojackmykids.authentication.GaeUserAuthentication;
@@ -55,10 +57,11 @@ public class RegistrationController {
 		//HttpSession session = result.getSession(true);
 		log.warning(session.getAttribute("SPRING_SECURITY_CONTEXT").toString());
 		
-		log.warning("At entry...");
+
 		//Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		GaeUser currentUser = (GaeUser) authentication.getPrincipal();
+		
 		log.warning("Current User: "+currentUser.toString());
 		
 		Set<AppRole> roles = EnumSet.of(AppRole.ROLE_USER);
@@ -66,15 +69,18 @@ public class RegistrationController {
 		if (UserServiceFactory.getUserService().isUserAdmin()) {
 			roles.add(AppRole.ROLE_ADMIN);
 		}
-
-		GaeUser user = new GaeUser(currentUser.getUserId(), 
+		Key key = Datastore.createKey(GaeUser.class, currentUser.getUserId() );
+		GaeUser user = new GaeUser(
+				currentUser.getUserId(), 
 				currentUser.getNickname(),
-				currentUser.getEmail(), 
+				form.getEmail(), 
 				form.getForename(), 
 				form.getSurname(), 
 				roles,
-				true);
-		
+				true,
+				form.getPassword(), 
+				null);
+
 		/* for my version of user
 		GaeUser user = new GaeUser(currentUser.getUserId());
 		user.setNickname(currentUser.getNickname());
