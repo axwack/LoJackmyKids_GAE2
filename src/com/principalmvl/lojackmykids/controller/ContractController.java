@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.principalmvl.lojackmykids.model.Contact;
+import com.principalmvl.lojackmykids.model.GaeUser;
 
 
 @Controller
@@ -25,6 +26,17 @@ public class ContractController {
 		public @ResponseBody List<Contact> listCustomer( ModelMap model) {
 			log.warn("In the list return on the UserController");
 			List<Contact> users = Datastore.query(Contact.class).asList();
+			
+			model.addAttribute("userList", users);
+				
+			return users;
+
+		}
+		@RequestMapping(value = "/list2", method = RequestMethod.GET)
+		
+		public @ResponseBody List<GaeUser> listGaeUser( ModelMap model) {
+			log.warn("In the list return on the UserController returning GAE Users");
+			List<GaeUser> users = Datastore.query(GaeUser.class).asList();
 			
 			model.addAttribute("userList", users);
 				

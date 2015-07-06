@@ -15,7 +15,6 @@
 	<http pattern="/_ah/**" security="none" />
 	<http pattern="/landing.jsp" security="none"></http>
 
-
 	<http use-expressions="true" entry-point-ref="gaeEntryPoint"
 		auto-config="true">
 		<intercept-url pattern="/" access="permitAll" />

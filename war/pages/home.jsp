@@ -45,9 +45,9 @@
 	<div class="nav-bar">
 		<div class="container">
 			<ul class="nav">
-				<li><a href="/">Home</a></li>
+				<li><a href="#">Home</a></li>
 				<li><a href="<c:url value="/ListUsers"/>">Get List of Users</a></li>
-				<li><a href="<c:url value="/SendMessage"/>">Send Message</a></li>
+				<li><a href="<c:url value="/sendUser"/>">Send Message</a></li>
 				<li><a href="#">&nbsp;</a></li>
 			</ul>
 		</div>

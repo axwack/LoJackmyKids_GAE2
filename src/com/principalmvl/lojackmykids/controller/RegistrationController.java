@@ -56,8 +56,7 @@ public class RegistrationController {
 		}
 		//HttpSession session = result.getSession(true);
 		log.warning(session.getAttribute("SPRING_SECURITY_CONTEXT").toString());
-		
-
+	
 		//Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		GaeUser currentUser = (GaeUser) authentication.getPrincipal();
@@ -69,7 +68,7 @@ public class RegistrationController {
 		if (UserServiceFactory.getUserService().isUserAdmin()) {
 			roles.add(AppRole.ROLE_ADMIN);
 		}
-		Key key = Datastore.createKey(GaeUser.class, currentUser.getUserId() );
+
 		GaeUser user = new GaeUser(
 				currentUser.getUserId(), 
 				currentUser.getNickname(),

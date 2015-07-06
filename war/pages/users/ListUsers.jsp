@@ -6,6 +6,8 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jstl/core"%>
 
 <c:url value="/user/list" var="transportReadUrl" />
+<c:url value="/user/list2" var="transportReadUrl2" />
+
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -27,7 +29,7 @@
 	<div class="nav-bar">
 		<div class="container">
 			<ul class="nav">
-				<li><a href="/">Home</a></li>
+				<li><a href="<c:url value="/home.jsp"/>">Home</a></li>
 				<li><a href="#">Get List of Users</a></li>
 				<li><a href="/SendAll">Send Message</a></li>
 				<li><a href="#">&nbsp;</a></li>
@@ -38,13 +40,14 @@
 		<div class="container">
 			<div class="main">
 				<div id="clientsDb" class="content">
-					<kendo:grid name="grid" groupable="true" sortable="true" selectable="multiple" style="height:380px;">
+					<kendo:grid name="grid" groupable="true" sortable="true" resizable="true" selectable="multiple" style="height:380px;">
 						<kendo:grid-pageable refresh="true" pageSizes="true"
 							buttonCount="5">
 						</kendo:grid-pageable>
 						<kendo:grid-columns>
 							<kendo:grid-column title="ID" field="id" width="140" />
 							<kendo:grid-column title="Email" field="email" width="190" />
+							
 							<kendo:grid-column title="Last Update" field="updatedAt"
 								format="{0:MM/dd/yyyy}" width="190" />
 							<kendo:grid-column title="Create Date" field="createdAt"
@@ -56,6 +59,7 @@
 									<kendo:dataSource-schema-model-fields>
 										<kendo:dataSource-schema-model-field name="user" type="string" />
 										<kendo:dataSource-schema-model-field name="id" type="string" />
+									
 										<kendo:dataSource-schema-model-field name="updatedAt"
 											type="datetime" />
 										<kendo:dataSource-schema-model-field name="createdAt"
@@ -69,6 +73,43 @@
 						</kendo:dataSource>
 					</kendo:grid>
 				</div>
+				<div id="clientsDb" class="content">
+				<kendo:grid name="grid2" groupable="true" sortable="true" selectable="multiple" resizable="true" style="height:380px;">
+						<kendo:grid-pageable refresh="true" pageSizes="true"
+							buttonCount="5">
+						</kendo:grid-pageable>
+						<kendo:grid-columns>
+							<kendo:grid-column title="UserID" field="userId" width="140" />
+							<kendo:grid-column title="Email" field="email" width="190" />
+							<kendo:grid-column title="Enabled" field="enabled" width="190" />
+							<kendo:grid-column title="Roles Bit" field="rolesBit" width="190" />
+							<kendo:grid-column title="Authorities" field="authorities" width="190" />
+							<kendo:grid-column title="Last Update" field="updatedAt"
+								format="{0:MM/dd/yyyy}" width="190" />
+							<kendo:grid-column title="Create Date" field="createdAt"
+								format="{0:MM/dd/yyyy}" width="190" />
+						</kendo:grid-columns>
+						<kendo:dataSource pageSize="10" data="${ users }">
+							<kendo:dataSource-schema>
+								<kendo:dataSource-schema-model>
+									<kendo:dataSource-schema-model-fields>
+										<kendo:dataSource-schema-model-field name="userId" type="string" />
+										<kendo:dataSource-schema-model-field name="rolesBit" type="string" />
+										<kendo:dataSource-schema-model-field name="enabled" type="string" />
+										<kendo:dataSource-schema-model-field name="authorities" type="string" />
+										<kendo:dataSource-schema-model-field name="updatedAt"
+											type="datetime" />
+										<kendo:dataSource-schema-model-field name="createdAt"
+											type="datetime" />
+									</kendo:dataSource-schema-model-fields>
+								</kendo:dataSource-schema-model>
+							</kendo:dataSource-schema>
+							<kendo:dataSource-transport>
+								<kendo:dataSource-transport-read url="${transportReadUrl2}" />
+							</kendo:dataSource-transport>
+						</kendo:dataSource>
+					</kendo:grid>
+					</div>
 			</div>
 		</div>
 		<div class="aside">

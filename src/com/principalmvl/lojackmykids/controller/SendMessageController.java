@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,16 +16,15 @@ import com.principalmvl.lojackmykids.datautilities.AppengineDataUtilities;
 import com.principalmvl.lojackmykids.server.GSONObject;
 import com.principalmvl.lojackmykids.server.SendMessageHttpServlet;
 
+
 @Controller
-
-public class SendAllController {
-
+public class SendMessageController {
 	private static final long serialVersionUID = 6329503918429937476L;
 	String AP_KEY="AIzaSyAjYdpOzQcDqIWtHn1zzRvJipSi5L2c5eY";
 	private String Endpoint = "https://gcm-http.googleapis.com/gcm/send";
 	private static final Logger log = Logger.getLogger(SendMessageHttpServlet.class.getName());
-	
-	@RequestMapping("/SendMessage")
+	/*
+	@RequestMapping (value = {"/SendMessage"}, method = RequestMethod.POST)
 	public String sendMessage(@RequestParam Map<String,String> allRequestParams) {
 
 		// 1. We need to determine how many posts come over and how many lat lng
@@ -91,19 +90,18 @@ public class SendAllController {
 		 * resp.setHeader("Authorization", "key="+AP_KEY); RequestDispatcher
 		 * dispatcher = req.getRequestDispatcher(GCMEndpoint);
 		 * dispatcher.forward(req, resp); log.warning(resp.toString());
-		 */
+		 
 		
 		
-		return "sendmessage/SendMessage";
+		return "multiselect/SendMessage";
 	}
-	
-	@RequestMapping(value = {"index"}, method = RequestMethod.GET)
-	public String index(ModelMap model) {
-	    model.addAttribute("users", AppengineDataUtilities.getUsers(model));
+	*/
+	@RequestMapping(value = {"/sendUser"}, method = RequestMethod.GET)
+	public String sendUser(Model model) {
+		log.warning("Users: "+AppengineDataUtilities.getUsers(model).toString());
+	    model.addAttribute("sendUsers", AppengineDataUtilities.getUsers(model));
 
-	    return "web/multiselect/index";
+	    return "sendmessage/SendMessage";
 	}
-	
- 	private String createJsonString(){
-		return null;}
+
 }
